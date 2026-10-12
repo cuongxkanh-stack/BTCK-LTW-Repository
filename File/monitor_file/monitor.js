@@ -31,8 +31,7 @@ function toast(message) {
 }
 
 async function loadMonitor() {
-  const api = window.LegalPathAPI || {};
-  state.monitor = api.getMonitor ? (await api.getMonitor()) || [] : [];
+  state.monitor = await window.LegalPathAPI.getCollection('monitor');
 }
 
 function renderMonitor() {
@@ -76,9 +75,15 @@ function bindMonitorControls() {
   $('#monitorStatus').addEventListener('change', renderMonitor);
   $('#monitorSource').addEventListener('change', renderMonitor);
   $('#monitorPeriod').addEventListener('change', () => toast(`Đã chọn khoảng thời gian: ${$('#monitorPeriod').value}`));
-  refreshButton.addEventListener('click', () => {
-    renderMonitor();
-    toast('Dữ liệu demo đã được làm mới.');
+  refreshButton.addEventListener('click', async () => {
+    try {
+      await loadMonitor();
+      renderMonitor();
+      toast('Đã tải lại dữ liệu từ API.');
+    } catch (error) {
+      console.error('Không thể cập nhật dữ liệu theo dõi:', error);
+      toast('Không thể tải dữ liệu. Hãy kiểm tra API đang chạy.');
+    }
   });
 }
 
@@ -90,7 +95,13 @@ function bindProfile() {
 }
 
 async function initPage() {
-  await loadMonitor();
+  try {
+    await loadMonitor();
+  } catch (error) {
+    console.error('Không thể tải dữ liệu theo dõi:', error);
+    toast('Không tải được dữ liệu theo dõi. Hãy chạy trang bằng Live Server.');
+  }
+
   bindMonitorControls();
   bindProfile();
   renderMonitor();

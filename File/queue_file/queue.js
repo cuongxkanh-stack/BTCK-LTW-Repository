@@ -44,8 +44,7 @@ function toast(message) {
 }
 
 async function loadQueue() {
-  const api = window.LegalPathAPI || {};
-  state.queue = api.getQueue ? (await api.getQueue()) || [] : [];
+  state.queue = await window.LegalPathAPI.getCollection('queue');
 
   if (state.queue.length) {
     const firstPendingIndex = state.queue.findIndex((item) => item.status === 'Chờ duyệt');
@@ -74,6 +73,8 @@ function renderQueue() {
 
   $('#queueEmpty').classList.toggle('hidden', rows.length !== 0);
   $('#pendingCount').textContent = state.queue.filter((item) => item.status === 'Chờ duyệt').length;
+  $('#approvedCount').textContent = state.queue.filter((item) => item.status === 'Đã duyệt').length;
+  $('#rejectedCount').textContent = state.queue.filter((item) => item.status === 'Từ chối').length;
 
   $$('#queueRows tr').forEach((row) => {
     row.addEventListener('click', () => {
@@ -139,15 +140,25 @@ function renderQueueDetail() {
   }
 }
 
-function updateQueueItem(status) {
+async function updateQueueItem(status) {
   const item = state.queue[state.selectedQueueIndex];
   if (!item) return;
 
-  item.status = status;
-  state.activeQueueStatus = status;
-  $$('.tab').forEach((tab) => tab.classList.toggle('active', tab.dataset.status === status));
-  renderQueue();
-  toast(status === 'Đã duyệt' ? 'Đã duyệt nội dung.' : 'Đã chuyển nội dung sang mục từ chối.');
+  const nextQueue = state.queue.map((queueItem, index) => (
+    index === state.selectedQueueIndex ? { ...queueItem, status } : queueItem
+  ));
+
+  try {
+    await window.LegalPathAPI.saveCollection('queue', nextQueue);
+    state.queue = nextQueue;
+    state.activeQueueStatus = status;
+    $$('.tab').forEach((tab) => tab.classList.toggle('active', tab.dataset.status === status));
+    renderQueue();
+    toast(status === 'Đã duyệt' ? 'Đã duyệt và lưu nội dung.' : 'Đã từ chối và lưu nội dung.');
+  } catch (error) {
+    console.error('Không thể cập nhật trạng thái nội dung:', error);
+    toast('Không thể lưu thay đổi. Hãy kiểm tra API đang chạy.');
+  }
 }
 
 function bindQueueControls() {
@@ -174,7 +185,13 @@ function bindProfile() {
 }
 
 async function initPage() {
-  await loadQueue();
+  try {
+    await loadQueue();
+  } catch (error) {
+    console.error('Không thể tải dữ liệu hàng đợi:', error);
+    toast('Không tải được hàng đợi. Hãy chạy trang bằng Live Server.');
+  }
+
   bindQueueControls();
   bindProfile();
   renderQueue();

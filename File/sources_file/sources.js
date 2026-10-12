@@ -42,8 +42,7 @@ function toast(message) {
 }
 
 async function loadSources() {
-  const api = window.LegalPathAPI || {};
-  state.sources = api.getSources ? (await api.getSources()) || [] : [];
+  state.sources = await window.LegalPathAPI.getCollection('sources');
 }
 
 function renderSources() {
@@ -72,15 +71,24 @@ function renderSources() {
   $('#sourceEmpty').classList.toggle('hidden', list.length !== 0);
   $('#sourceCount').textContent = `Hiển thị ${list.length ? 1 : 0} - ${list.length} trong ${state.sources.length} nguồn`;
   $('#sourceTotal').textContent = state.sources.length;
+  $('#activeSourceTotal').textContent = state.sources.filter((source) => source.status === 'Hoạt động').length;
+  $('#checkSourceTotal').textContent = state.sources.filter((source) => source.status === 'Cần kiểm tra').length;
 
   $$('.remove-source').forEach((button) => {
-    button.addEventListener('click', () => {
-      if (confirm(`Xóa nguồn "${button.dataset.name}" khỏi danh sách demo?`)) {
+    button.addEventListener('click', async () => {
+      if (confirm(`Xóa nguồn "${button.dataset.name}" khỏi dữ liệu?`)) {
         const index = state.sources.findIndex((source) => source.name === button.dataset.name);
         if (index >= 0) {
-          state.sources.splice(index, 1);
-          renderSources();
-          toast('Đã xóa nguồn khỏi giao diện.');
+          const nextSources = state.sources.filter((_, sourceIndex) => sourceIndex !== index);
+          try {
+            await window.LegalPathAPI.saveCollection('sources', nextSources);
+            state.sources = nextSources;
+            renderSources();
+            toast('Đã xóa nguồn và lưu dữ liệu.');
+          } catch (error) {
+            console.error('Không thể xóa nguồn:', error);
+            toast('Không thể lưu thay đổi. Hãy kiểm tra API đang chạy.');
+          }
         }
       }
     });
@@ -101,9 +109,10 @@ function bindSourceControls() {
   $('#closeDialog').addEventListener('click', () => dialog.close());
   $('#cancelDialog').addEventListener('click', () => dialog.close());
 
-  sourceForm.addEventListener('submit', (event) => {
+  sourceForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const data = new FormData(form);
     const name = data.get('name').trim();
     const url = data.get('url').trim();
 
@@ -112,17 +121,24 @@ function bindSourceControls() {
       return;
     }
 
-    state.sources.unshift({
+    const nextSources = [{
       name,
       type: data.get('type'),
       url,
       status: data.get('status')
-    });
+    }, ...state.sources];
 
-    event.currentTarget.reset();
-    dialog.close();
-    renderSources();
-    toast('Đã thêm nguồn mới vào danh sách demo.');
+    try {
+      await window.LegalPathAPI.saveCollection('sources', nextSources);
+      state.sources = nextSources;
+      form.reset();
+      dialog.close();
+      renderSources();
+      toast('Đã thêm nguồn và lưu dữ liệu.');
+    } catch (error) {
+      console.error('Không thể thêm nguồn:', error);
+      toast('Không thể lưu thay đổi. Hãy kiểm tra API đang chạy.');
+    }
   });
 }
 
@@ -134,7 +150,13 @@ function bindProfile() {
 }
 
 async function initPage() {
-  await loadSources();
+  try {
+    await loadSources();
+  } catch (error) {
+    console.error('Không thể tải dữ liệu nguồn:', error);
+    toast('Không tải được dữ liệu nguồn. Hãy chạy trang bằng Live Server.');
+  }
+
   bindSourceControls();
   bindProfile();
   renderSources();

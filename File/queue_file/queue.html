@@ -56,8 +56,8 @@
             <button class="tab active" data-status="Chờ duyệt" type="button">
               Chờ duyệt <b id="pendingCount">5</b>
             </button>
-            <button class="tab" data-status="Đã duyệt" type="button">Đã duyệt <b>12</b></button>
-            <button class="tab" data-status="Từ chối" type="button">Từ chối <b>2</b></button>
+            <button class="tab" data-status="Đã duyệt" type="button">Đã duyệt <b id="approvedCount">0</b></button>
+            <button class="tab" data-status="Từ chối" type="button">Từ chối <b id="rejectedCount">0</b></button>
           </div>
           <div class="table-wrap">
             <table>
@@ -80,7 +80,7 @@
     </div>
 
     <div class="toast" id="toast" role="status"></div>
-    <script src="../api.js"></script>
-    <script src="../queue.js"></script>
+    <script src="../api-client.js"></script>
+    <script src="queue.js"></script>
   </body>
 </html>
