@@ -1,13 +1,13 @@
-const $ = (selector, root = document) => root.querySelector(selector);
+const $ = (selector, root = document) => root.querySelector(selector); //Hàm chọn phần tử
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-
-const state = {
+//Lưu trang thái hiện tại
+const state = {                                             //Khai báo biến
   queue: [],
   activeQueueStatus: 'Chờ duyệt',
   selectedQueueIndex: 0
 };
-
-function statusClass(status) {
+//Chuyển về CSS
+function statusClass(status) {               //Các hàm hỗ trợ
   return ({
     'Hoạt động': 'active',
     'Cần kiểm tra': 'check',
@@ -19,11 +19,11 @@ function statusClass(status) {
     'Đã cũ': 'old'
   })[status] || '';
 }
-
+//Tạo nhãn dán
 function badge(status) {
   return `<span class="status ${statusClass(status)}">${status}</span>`;
 }
-
+//Bảo vệ nội dung khi hiển thị HTML
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (c) => ({
     '&': '&amp;',
@@ -33,7 +33,7 @@ function escapeHtml(value) {
     "'": '&#39;'
   }[c]));
 }
-
+//Hiển thị thông báo 
 function toast(message) {
   const el = $('#toast');
   if (!el) return;
@@ -42,8 +42,8 @@ function toast(message) {
   clearTimeout(toast.timer);
   toast.timer = setTimeout(() => el.classList.remove('show'), 2600);
 }
-
-async function loadQueue() {
+//Tải dữ liệu vào API
+async function loadQueue() {                             //Tải dữ liệu
   state.queue = await window.LegalPathAPI.getCollection('queue');
 
   if (state.queue.length) {
@@ -51,8 +51,8 @@ async function loadQueue() {
     state.selectedQueueIndex = firstPendingIndex >= 0 ? firstPendingIndex : 0;
   }
 }
-
-function renderQueue() {
+//Hiển thị bảng nội dung
+function renderQueue() {                             //Hiển thị giao diện
   const queueSearch = $('#queueSearch');
   if (!queueSearch) return;
 
@@ -60,7 +60,7 @@ function renderQueue() {
   const rows = state.queue
     .map((item, index) => ({ ...item, index }))
     .filter((item) => item.status === state.activeQueueStatus && `${item.title} ${item.source} ${item.sender}`.toLowerCase().includes(q));
-
+//Tạo các hàng trong HTML
   $('#queueRows').innerHTML = rows.map((item) => `
     <tr class="clickable ${item.index === state.selectedQueueIndex ? 'selected-row' : ''}" data-index="${item.index}">
       <td><strong>${escapeHtml(item.title)}</strong></td>
@@ -70,12 +70,12 @@ function renderQueue() {
       <td>${badge(item.status)}</td>
     </tr>
   `).join('');
-
+//Hiển thị trang thái và danh sách số lượng
   $('#queueEmpty').classList.toggle('hidden', rows.length !== 0);
   $('#pendingCount').textContent = state.queue.filter((item) => item.status === 'Chờ duyệt').length;
   $('#approvedCount').textContent = state.queue.filter((item) => item.status === 'Đã duyệt').length;
   $('#rejectedCount').textContent = state.queue.filter((item) => item.status === 'Từ chối').length;
-
+//Gắn sự kiện vào từng hàng
   $$('#queueRows tr').forEach((row) => {
     row.addEventListener('click', () => {
       state.selectedQueueIndex = Number(row.dataset.index);
@@ -86,7 +86,7 @@ function renderQueue() {
 
   renderQueueDetail();
 }
-
+//Hiện thị chi tiết nội dung
 function renderQueueDetail() {
   const item = state.queue[state.selectedQueueIndex];
   if (!item) {
@@ -127,7 +127,7 @@ function renderQueueDetail() {
       </div>
     </div>
   `;
-
+  //Nút đồng ý và từ chối
   const approveButton = $('#approveItem');
   const rejectButton = $('#rejectItem');
 
@@ -139,8 +139,8 @@ function renderQueueDetail() {
     rejectButton.addEventListener('click', () => updateQueueItem('Từ chối'));
   }
 }
-
-async function updateQueueItem(status) {
+//Hàm duyệt hoặc từ chối nội dung
+async function updateQueueItem(status) {                            //Xử lý nghiệp vụ
   const item = state.queue[state.selectedQueueIndex];
   if (!item) return;
 
@@ -160,8 +160,8 @@ async function updateQueueItem(status) {
     toast('Không thể lưu thay đổi. Hãy kiểm tra API đang chạy.');
   }
 }
-
-function bindQueueControls() {
+//Gắn sự kiện cho giao diện
+function bindQueueControls() {          //Gắn ự kiện
   $('#queueSearch').addEventListener('input', renderQueue);
   $$('.tab').forEach((tab) => {
     tab.addEventListener('click', () => {
@@ -176,14 +176,14 @@ function bindQueueControls() {
     toast('Nhập từ khóa vào ô tìm kiếm để lọc nội dung.');
   });
 }
-
+//Xử lý nút hồ sơ
 function bindProfile() {
   const profileButton = $('#profileButton');
   if (profileButton) {
     profileButton.addEventListener('click', () => toast('Bạn đang đăng nhập với vai trò Editor (bản demo).'));
   }
 }
-
+//Khởi tạo trang                    //Khởi tạo
 async function initPage() {
   try {
     await loadQueue();
