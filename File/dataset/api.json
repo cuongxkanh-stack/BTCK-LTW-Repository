@@ -191,5 +191,77 @@
       "age": 28,
       "status": "Đã cũ"
     }
+  ],
+  "notifications": [
+    {
+      "id": "question-reply",
+      "title": "Câu hỏi của bạn có phản hồi mới",
+      "description": "Câu hỏi “Cần giấy tờ gì để đăng ký tạm trú?” đã có phản hồi. Xem hướng dẫn và các lưu ý cần thiết.",
+      "date": "03/10/2026",
+      "time": "09:15",
+      "isToday": true,
+      "isRead": true,
+      "category": "Phản hồi",
+      "action": "Xem phản hồi"
+    },
+    {
+      "id": "residency-guide",
+      "title": "Nội dung mới về thủ tục cư trú",
+      "description": "Hướng dẫn đăng ký tạm trú trực tuyến: điều kiện, hồ sơ và các bước thực hiện.",
+      "date": "03/10/2026",
+      "time": "08:30",
+      "isToday": true,
+      "isRead": true,
+      "category": "Hướng dẫn",
+      "action": "Đọc hướng dẫn"
+    },
+    {
+      "id": "followed-topic",
+      "title": "Chủ đề bạn theo dõi đã được cập nhật",
+      "description": "Chủ đề “Hợp đồng lao động” có thêm nội dung về quyền và nghĩa vụ khi chấm dứt hợp đồng.",
+      "date": "02/10/2026",
+      "time": "16:40",
+      "isToday": false,
+      "isRead": true,
+      "category": "Chủ đề",
+      "action": "Xem chủ đề"
+    },
+    {
+      "id": "legal-news",
+      "title": "Bản tin pháp lý tuần này",
+      "description": "Những điều cần biết về bảo hiểm xã hội, cư trú và các thủ tục hành chính thường gặp.",
+      "date": "01/10/2026",
+      "time": "10:00",
+      "isToday": false,
+      "isRead": true,
+      "category": "Bản tin",
+      "action": "Đọc bản tin"
+    },
+    {
+      "id": "welcome",
+      "title": "Chào mừng bạn đến với LegalPath",
+      "description": "Bắt đầu bằng cách theo dõi chủ đề quan tâm và lưu lại những hướng dẫn hữu ích.",
+      "date": "28/09/2026",
+      "time": "14:20",
+      "isToday": false,
+      "isRead": true,
+      "category": "Chủ đề",
+      "action": "Khám phá chủ đề"
+    }
+  ],
+  "settings": [
+    {
+      "name": "Nguyễn Minh Anh",
+      "email": "minhanh.nguyen@gmail.com",
+      "phone": "0912 345 678",
+      "role": "Editor",
+      "joinedAt": "08/2026",
+      "language": "vi",
+      "preferences": {
+        "legalUpdates": false,
+        "replies": false,
+        "emailNewsletter": false
+      }
+    }
   ]
 }

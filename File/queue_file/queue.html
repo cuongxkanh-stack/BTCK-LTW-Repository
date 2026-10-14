@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head> //Phần cấu hình
+  <head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LegalPath - Hàng đợi duyệt</title>
@@ -8,7 +8,7 @@
   </head>
   <body data-page="queue">
     <div class="app-shell">
-      <aside class="sidebar"> //Thanh điều hướng
+      <aside class="sidebar"> 
         <a class="brand" href="../sources_file/sources.html" aria-label="LegalPath - Quản lý nguồn">
           <span class="brand-mark">⚖</span>
           <span>
@@ -20,11 +20,13 @@
           <a class="nav-link active" href="queue.html"><span>☷</span> Hàng đợi duyệt</a>
           <a class="nav-link" href="../sources_file/sources.html"><span>▤</span> Quản lý nguồn</a>
           <a class="nav-link" href="../monitor_file/monitor.html"><span>◷</span> Theo dõi độ mới</a>
+          <a class="nav-link" href="../notification_file/notification.html"><span>🔔</span> Thông báo</a>
+          <a class="nav-link" href="../setting_file/setting.html"><span>⚙</span> Cài đặt</a>
         </nav>
         <div class="sidebar-bottom">LegalPath Admin <span>v1.0</span></div>
       </aside>
 
-      <main class="main-area"> //Nội dung chính
+      <main class="main-area"> 
         <header class="topbar">
           <div class="breadcrumbs">
             <span>Không gian biên tập</span>
@@ -39,7 +41,7 @@
         </header>
 
         <section class="page-view active" id="page-queue">
-          <div class="page-heading"> //Các thành phần quản lý hàng đợi
+          <div class="page-heading"> 
             <div>
               <h1>Hàng đợi duyệt nội dung</h1>
               <p>Xem và duyệt các nội dung pháp lý được gửi lên hệ thống.</p>
@@ -79,7 +81,7 @@
       </main>
     </div>
 
-    <div class="toast" id="toast" role="status"></div> //Các thành phần hỗ trợ
+    <div class="toast" id="toast" role="status"></div> 
     <script src="../api-client.js"></script>
     <script src="queue.js"></script>
   </body>

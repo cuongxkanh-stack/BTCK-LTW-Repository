@@ -6,7 +6,7 @@ const HOST = '127.0.0.1';
 const PORT = 3000;
 const MAX_BODY_BYTES = 1024 * 1024;
 const DATA_PATH = path.join(__dirname, 'dataset', 'api.json');
-const COLLECTIONS = new Set(['sources', 'queue', 'monitor']);
+const COLLECTIONS = new Set(['sources', 'queue', 'monitor', 'notifications', 'settings']);
 
 let pendingWrite = Promise.resolve();
 
